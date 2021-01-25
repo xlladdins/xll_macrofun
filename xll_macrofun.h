@@ -11,16 +11,47 @@
 //#define XLL_VERSION 4
 #include "xll/xll/xll.h"
 
-
-
 namespace xll {
 
 	using xll::Excel;
 
+	//
+	// Parameterized functions
+	//
+
+	// move relative to active cell
+	template<class X = XLOPERX>
+	inline XOPER<X> Move(int r, int c)
+	{
+		return XExcel<X>(xlcSelect,
+			XExcel<X>(xlfOffset, XExcel<X>(xlfActiveCell), XOPER<X>(r), XOPER<X>(c))
+		);
+	}
+	template<class X = XLOPERX>
+	inline XOPER<X> Up(int r = 1)
+	{
+		return Move<X>(-r, 0);
+	}
+	template<class X = XLOPERX>
+	inline XOPER<X> Down(int r = 1)
+	{
+		return Move<X>(r, 0);
+	}
+	template<class X = XLOPERX>
+	inline XOPER<X> Right(int c = 1)
+	{
+		return Move<X>(0, c);
+	}
+	template<class X = XLOPERX>
+	inline XOPER<X> Left(int c = 1)
+	{
+		return Move<X>(0, -c);
+	}
+
 	// RGB colors in the palette
 	// https://xlladdins.github.io/Excel4Macros/edit.color.html
 	class EditColor {
-		inline static int count = 57; // largest index
+		inline static int count = 57; // largest index + 1
 	public:
 		OPER r, g, b;
 		EditColor(int _r, int _g, int _b)
@@ -323,13 +354,23 @@ namespace xll {
 		Style(const char* name)
 			: name(name)
 		{ }
-		OPER Apply()
+		// https://xlladdins.github.io/Excel4Macros/apply.style.html
+		OPER Apply() const
 		{
 			return xll::Excel(xlcApplyStyle, name);
 		}
-		OPER Delete()
+		static OPER Apply(const OPER& name)
 		{
-			return xll::Excel(xlcDeleteStyle);
+			return xll::Excel(xlcApplyStyle, name);
+		}
+		// https://xlladdins.github.io/Excel4Macros/delete.style.html
+		OPER Delete() const 
+		{
+			return xll::Excel(xlcDeleteStyle, name);
+		}
+		static OPER Delete(const OPER& name)
+		{
+			return xll::Excel(xlcDeleteStyle, name);
 		}
 		// define styles
 		Style& FormatNumber(const char* format)
@@ -371,6 +412,7 @@ namespace xll {
 	};
 
 	// foreground and background cell colors
+	// https://xlladdins.github.io/Excel4Macros/patterns.html
 	inline OPER Patterns(OPER fore, OPER back)
 	{
 		return xll::Excel(xlcPatterns, OPER(1), fore, back);
