@@ -1,4 +1,4 @@
-// spreadsheet.h - tools for automating spreadsheet creation
+// xll_macrofun.h - tools for automating spreadsheet creation
 // 
 // This header makes it convenient to call macro functions 
 // documented in https://xlladdins.github.io/Excel4Macros/
@@ -25,38 +25,33 @@ namespace xll {
 	//
 
 	// move relative to active cell
-	template<class X = XLOPERX>
-	inline XOPER<X> Move(int r, int c)
+	inline OPER Move(int r, int c)
 	{
-		return XExcel<X>(xlcSelect,
-			XExcel<X>(xlfOffset, 
-				XExcel<X>(xlfActiveCell), XOPER<X>(r), XOPER<X>(c)
+		return Excel(xlcSelect,
+			Excel(xlfOffset, 
+				Excel(xlfActiveCell), OPER(r), OPER(c)
 			)
 		);
 	}
 	// move down r rows
-	template<class X = XLOPERX>
-	inline XOPER<X> Down(int r = 1)
+	inline OPER Down(int r = 1)
 	{
-		return Move<X>(r, 0);
+		return Move(r, 0);
 	}
 	// move up r rows
-	template<class X = XLOPERX>
-	inline XOPER<X> Up(int r = 1)
+	inline OPER Up(int r = 1)
 	{
-		return Move<X>(-r, 0);
+		return Move(-r, 0);
 	}
 	// move right c columns
-	template<class X = XLOPERX>
-	inline XOPER<X> Right(int c = 1)
+	inline OPER Right(int c = 1)
 	{
-		return Move<X>(0, c);
+		return Move(0, c);
 	}
 	// move left c columns
-	template<class X = XLOPERX>
-	inline XOPER<X> Left(int c = 1)
+	inline OPER Left(int c = 1)
 	{
-		return Move<X>(0, -c);
+		return Move(0, -c);
 	}
 
 	//
@@ -84,7 +79,7 @@ namespace xll {
 				index = count;
 			}
 			ensure(0 <= index and index <= 56);
-			ensure(xll::Excel(xlcEditColor, OPER(index), OPER(r), OPER(g), OPER(b)));
+			ensure(Excel(xlcEditColor, OPER(index), OPER(r), OPER(g), OPER(b)));
 
 			return OPER(count);
 		}
@@ -142,7 +137,7 @@ namespace xll {
 
 		OPER Align()
 		{
-			return xll::Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation);
+			return Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation);
 		}
 		static OPER Align(enum Horizontal e)
 		{
@@ -173,7 +168,7 @@ namespace xll {
 
 		OPER Font()
 		{
-			return xll::Excel(xlcFormatFont, name_text, size_num,
+			return Excel(xlcFormatFont, name_text, size_num,
 				bold, italic, underline, strike,
 				color, outline, shadow);
 		}
@@ -233,7 +228,7 @@ namespace xll {
 
 		OPER Calculation()
 		{
-			return xll::Excel(xlcOptionsCalculation, type_num, iter, max_num, max_change,
+			return Excel(xlcOptionsCalculation, type_num, iter, max_num, max_change,
 				update, precision, date_1904, calc_save, save_values);
 		}
 	};
@@ -259,7 +254,7 @@ namespace xll {
 
 		OPER View()
 		{
-			return xll::Excel(xlcOptionsView, formula, status, notes,
+			return Excel(xlcOptionsView, formula, status, notes,
 				show_info, object_num, page_breaks,
 				formulas, gridlines, color_num, headers, outline,
 				zeros, hor_scroll, vert_scroll, sheet_tabs);
@@ -276,54 +271,54 @@ namespace xll {
 	// https://xlladdins.github.io/Excel4Macros/get.cell.html
 	struct Cell {
 		OPER ref;
-		Cell(const OPER& ref = xll::Excel(xlfActiveCell))
+		Cell(const OPER& ref = Excel(xlfActiveCell))
 			: ref(ref)
 		{ }
 		Cell(REF ref)
 			: ref(OPER(ref))
 		{ }
 		Cell(const char* ref)
-			: ref(xll::Excel(xlfTextref, OPER(ref), OPER(false))) // R1C1
+			: ref(Excel(xlfTextref, OPER(ref), OPER(false))) // R1C1
 		{ }
 
 		// generic get
 		OPER Get(int i) const
 		{
-			return xll::Excel(xlfGetCell, OPER(i));
+			return Excel(xlfGetCell, OPER(i));
 		}
 
 		// Absolute reference of the upper-left cell in reference, as text in the current workspace reference style.
 		OPER AbsRef() const
 		{
-			return xll::Excel(xlfGetCell, OPER(1), ref);
+			return Excel(xlfGetCell, OPER(1), ref);
 		}
 		// Same as TYPE(reference).
 		OPER Type() const
 		{
-			return xll::Excel(xlfType, ref);
+			return Excel(xlfType, ref);
 		}
 		// Contents of reference.
 		OPER Contents() const
 		{
-			return xll::Excel(xlfGetCell, OPER(5), ref);
+			return Excel(xlfGetCell, OPER(5), ref);
 		}
 		// Formula in reference, as text, in either A1 or R1C1 style depending on the workspace setting.
 		OPER Formula() const
 		{
-			return xll::Excel(xlfGetCell, OPER(6), ref);
+			return Excel(xlfGetCell, OPER(6), ref);
 		}
 		// Number format of the cell
 		OPER FormatNumber() const
 		{
-			return xll::Excel(xlfGetCell, OPER(7), ref);
+			return Excel(xlfGetCell, OPER(7), ref);
 		}
 		Alignment Align() const
 		{
 			Alignment align;
 
-			align.horiz_align = xll::Excel(xlfGetCell, OPER(7), ref);
-			align.vert_align = xll::Excel(xlfGetCell, OPER(50), ref);
-			align.orientation = xll::Excel(xlfGetCell, OPER(51), ref);
+			align.horiz_align = Excel(xlfGetCell, OPER(7), ref);
+			align.vert_align = Excel(xlfGetCell, OPER(50), ref);
+			align.orientation = Excel(xlfGetCell, OPER(51), ref);
 
 			return align;
 		}
@@ -332,7 +327,7 @@ namespace xll {
 		// Row height of cell, in points.
 		OPER RowHeight() const
 		{
-			return xll::Excel(xlfGetCell, OPER(17), ref);
+			return Excel(xlfGetCell, OPER(17), ref);
 		}
 		// GET.CELL(44) - GET.CELL(42) to determine the width.
 		OPER Width() const
@@ -342,28 +337,28 @@ namespace xll {
 		// Name of font.
 		OPER FontName() const
 		{
-			return xll::Excel(xlfGetCell, OPER(18), ref);
+			return Excel(xlfGetCell, OPER(18), ref);
 		}
 		// Size of font, in points.
 		OPER FontSize() const
 		{
-			return xll::Excel(xlfGetCell, OPER(19), ref);
+			return Excel(xlfGetCell, OPER(19), ref);
 		}
 		// Style of the cell.
 		OPER Style() const
 		{
-			return xll::Excel(xlfGetCell, OPER(40), ref);
+			return Excel(xlfGetCell, OPER(40), ref);
 		}
 		// 46 	If the cell contains a text note, returns TRUE; otherwise, returns FALSE.
 		// This returns the note text
 		OPER Note() const
 		{
-			return xll::Excel(xlfGetNote, ref);
+			return Excel(xlfGetNote, ref);
 		}
 		// Returns the name of the sheet in the form "[Book1]Sheet1".
 		OPER Name() const
 		{
-			return xll::Excel(xlfGetCell, OPER(62), ref);
+			return Excel(xlfGetCell, OPER(62), ref);
 		}
 	};
 
@@ -376,31 +371,31 @@ namespace xll {
 		// https://xlladdins.github.io/Excel4Macros/apply.style.html
 		OPER Apply() const
 		{
-			return xll::Excel(xlcApplyStyle, name);
+			return Excel(xlcApplyStyle, name);
 		}
 		static OPER Apply(const OPER& name)
 		{
-			return xll::Excel(xlcApplyStyle, name);
+			return Excel(xlcApplyStyle, name);
 		}
 		// https://xlladdins.github.io/Excel4Macros/delete.style.html
 		OPER Delete() const 
 		{
-			return xll::Excel(xlcDeleteStyle, name);
+			return Excel(xlcDeleteStyle, name);
 		}
 		static OPER Delete(const OPER& name)
 		{
-			return xll::Excel(xlcDeleteStyle, name);
+			return Excel(xlcDeleteStyle, name);
 		}
 		// define styles
 		Style& FormatNumber(const char* format)
 		{
-			ensure(xll::Excel(xlcDefineStyle, name, OPER(2), OPER(format)));
+			ensure(Excel(xlcDefineStyle, name, OPER(2), OPER(format)));
 
 			return *this;
 		}
 		Style& FormatFont(const xll::FormatFont& format)
 		{
-			ensure(xll::Excel(xlcDefineStyle, name, OPER(3),
+			ensure(Excel(xlcDefineStyle, name, OPER(3),
 				format.name_text,
 				format.size_num,
 				format.bold,
@@ -413,7 +408,7 @@ namespace xll {
 		}
 		Style& Alignment(const xll::Alignment& align)
 		{
-			ensure(xll::Excel(xlcDefineStyle, name, OPER(4),
+			ensure(Excel(xlcDefineStyle, name, OPER(4),
 				align.horiz_align,
 				align.wrap,
 				align.vert_align,
@@ -424,7 +419,7 @@ namespace xll {
 		//!!! 4-7
 		Style& Pattern(const OPER& fore, const OPER& back = Missing)
 		{
-			ensure(xll::Excel(xlcDefineStyle, name, OPER(6), OPER(1), fore, back));
+			ensure(Excel(xlcDefineStyle, name, OPER(6), OPER(1), fore, back));
 
 			return *this;
 		}
@@ -434,14 +429,14 @@ namespace xll {
 	// https://xlladdins.github.io/Excel4Macros/patterns.html
 	inline OPER Patterns(OPER fore, OPER back)
 	{
-		return xll::Excel(xlcPatterns, OPER(1), fore, back);
+		return Excel(xlcPatterns, OPER(1), fore, back);
 	}
 
 	// https://xlladdins.github.io/Excel4Macros/selection.html
 	// https://xlladdins.github.io/Excel4Macros/select.html
 	struct Select {
 		OPER selection; // ??? must be an sref
-		Select(const OPER& _selection = xll::Excel(xlfActiveCell))
+		Select(const OPER& _selection = Excel(xlfActiveCell))
 			: selection(_selection)
 		{
 			if (selection.xltype & xltypeRef) {
@@ -454,12 +449,12 @@ namespace xll {
 			: Select(OPER(selection))
 		{ }
 		Select(const char* selection)
-			: Select(xll::Excel(xlfTextref, OPER(selection), OPER(false))) // R1C1
+			: Select(Excel(xlfTextref, OPER(selection), OPER(false))) // R1C1
 		{ }
 
 		OPER Offset(int r, int c, int h = 1, int w = 1) const
 		{
-			return xll::Excel(xlfOffset, selection, OPER(r), OPER(c), OPER(h), OPER(w));
+			return Excel(xlfOffset, selection, OPER(r), OPER(c), OPER(h), OPER(w));
 		}
 
 		// move r rows and c columns
@@ -491,43 +486,43 @@ namespace xll {
 		// Enters numbers, text, references, and formulas in a worksheet
 		OPER Formula(const OPER& formula)
 		{
-			return xll::Excel(xlcFormula, formula, selection);
+			return Excel(xlcFormula, formula, selection);
 		}
 		// https://docs.microsoft.com/en-us/office/client-developer/excel/xlset
 		OPER Set(const OPER& set)
 		{
-			return xll::Excel(xlSet, selection, set);
+			return Excel(xlSet, selection, set);
 		}
 		OPER RowHeight(int points)
 		{
-			return xll::Excel(xlcRowHeight, OPER(points), selection);
+			return Excel(xlcRowHeight, OPER(points), selection);
 		}
 		OPER RowVisible(bool visible = true)
 		{
-			return xll::Excel(xlcRowHeight, OPER(), selection, OPER(), OPER(visible ? 2 : 1));
+			return Excel(xlcRowHeight, OPER(), selection, OPER(), OPER(visible ? 2 : 1));
 		}
 		// Sets the row selection to a best-fit height
 		OPER RowFit()
 		{
-			return xll::Excel(xlcRowHeight, OPER(), selection, OPER(), OPER(3));
+			return Excel(xlcRowHeight, OPER(), selection, OPER(), OPER(3));
 		}
 		OPER ColumnWidth(int points)
 		{
-			return xll::Excel(xlcColumnWidth, OPER(points), selection);
+			return Excel(xlcColumnWidth, OPER(points), selection);
 		}
 		OPER ColumnVisible(bool visible = true)
 		{
-			return xll::Excel(xlcColumnWidth, OPER(), selection, OPER(), OPER(visible ? 2 : 1));
+			return Excel(xlcColumnWidth, OPER(), selection, OPER(), OPER(visible ? 2 : 1));
 		}
 		// Sets the column selection to a best-fit width
 		OPER ColumnFit()
 		{
-			return xll::Excel(xlcColumnWidth, OPER(), selection, OPER(), OPER(3));
+			return Excel(xlcColumnWidth, OPER(), selection, OPER(), OPER(3));
 		}
 		// Creates a comment 
 		OPER Note(const char* note)
 		{
-			return xll::Excel(xlcNote, OPER(note), selection);
+			return Excel(xlcNote, OPER(note), selection);
 		}
 		enum class Type {
 			Notes = 1,
@@ -569,7 +564,7 @@ namespace xll {
 				levels = OPER((int)level);
 			}
 
-			return xll::Excel(xlcSelectSpecial, type_num, value_type, levels);
+			return Excel(xlcSelectSpecial, type_num, value_type, levels);
 		}
 	};
 
@@ -583,15 +578,15 @@ namespace xll {
 		{ }
 		OPER Define(const OPER& ref, bool local)
 		{
-			return xll::Excel(xlcDefineName, name, ref, OPER(3), Missing, OPER(false), Missing, OPER(local));
+			return Excel(xlcDefineName, name, ref, OPER(3), Missing, OPER(false), Missing, OPER(local));
 		}
 		OPER Delete()
 		{
-			return xll::Excel(xlcDeleteName, name);
+			return Excel(xlcDeleteName, name);
 		}
 		OPER Get()
 		{
-			return xll::Excel(xlfGetName, name);
+			return Excel(xlfGetName, name);
 		}
 		// xlcSetName is only for macro sheets
 	};
@@ -599,23 +594,23 @@ namespace xll {
 	struct Document {
 		static OPER Book()
 		{
-			return xll::Excel(xlfGetDocument, OPER(88)); // Book
+			return Excel(xlfGetDocument, OPER(88)); // Book
 		}
 
 		static OPER Sheet()
 		{
-			return xll::Excel(xlfGetDocument, OPER(76)); // [Book]Sheet
+			return Excel(xlfGetDocument, OPER(76)); // [Book]Sheet
 		}
 	};
 
 	struct Workbook {
 		static OPER Rename(const OPER& name)
 		{
-			return xll::Excel(xlcWorkbookName, Document::Book(), name);
+			return Excel(xlcWorkbookName, Document::Book(), name);
 		}
 		static OPER Select(const OPER& name = Document::Sheet())
 		{
-			return xll::Excel(xlcWorkbookSelect, name);
+			return Excel(xlcWorkbookSelect, name);
 		}
 		// https://xlladdins.github.io/Excel4Macros/workbook.insert.html
 		enum class Type {
@@ -628,11 +623,11 @@ namespace xll {
 		};
 		static OPER Insert(enum Type type = Type::Worksheet)
 		{
-			return xll::Excel(xlcWorkbookInsert, OPER((int)type));
+			return Excel(xlcWorkbookInsert, OPER((int)type));
 		}
 		static OPER Move(const OPER& name, int position = 1)
 		{
-			return xll::Excel(xlcWorkbookMove, name, Document::Sheet(), OPER(position));
+			return Excel(xlcWorkbookMove, name, Document::Sheet(), OPER(position));
 		}
 	};
 }

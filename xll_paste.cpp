@@ -13,32 +13,32 @@ using namespace xll;
 
 
 template<class X>
-void xll_paste_name(const XArgs<X>& args)
+void xll_paste_name(const XArgs& args)
 {
-	Select<X> xAct;
-	XOPER<X> xFor = XOPER<X>("=") & args.FunctionText() & XOPER<X>("(");
+	Select xAct;
+	OPER xFor = OPER("=") & args->FunctionText() & OPER("(");
 
-	for (unsigned short i = 1; i <= args.ArgumentCount(); ++i) {
-		Move<X>(1, 0);
-		XOPER<X> xNamei = args.ArgumentName(i);
-		XExcel<X>(xlcFormula, xNamei);
+	for (unsigned short i = 1; i <= args->ArgumentCount(); ++i) {
+		Move(1, 0);
+		OPER xNamei = args->ArgumentName(i);
+		Excel(xlcFormula, xNamei);
 
-		Move<X>(0, 1);
+		Move(0, 1);
 		Name namei(xNamei);
-		namei.Define(Select<X>::Special(Select<X>::Type::Current), true);
+		namei.Define(Select::Special(Select::Type::Current), true);
 
-		Move<X>(0, -1);
+		Move(0, -1);
 		if (i > 1) {
 			xFor.append(", ");
 		}
 		xFor.append(xNamei);
 	}
-	xFor.append(XOPER<X>(")"));
+	xFor.append(OPER(")"));
 
-	XExcel<X>(xlcSelect, xAct.selection);
-	Move<X>(0, -1);
-	XExcel<X>(xlcFormula, xFor);
-	Move<X>(0, 1);
+	Excel(xlcSelect, xAct.selection);
+	Move(0, -1);
+	Excel(xlcFormula, xFor);
+	Move(0, 1);
 }
 
 void xll_paste_namex(void)
@@ -81,9 +81,9 @@ xll_paste(void)
 	int result(0);
 
 	try {
-		Excel(xlcEcho, XOPER<X>(false));
+		Excel(xlcEcho, OPER(false));
 
-		XOPER<X> oAct = Excel(xlCoerce, Excel(xlfActiveCell));
+		OPER oAct = Excel(xlCoerce, Excel(xlfActiveCell));
 
 		if (oAct.xltype == xltypeNum)
 			xll_paste_regidx();
@@ -92,11 +92,11 @@ xll_paste(void)
 		else
 			throw std::runtime_error("XLL.PASTE.FUNCTION: Active cell must be a number or a string. ");
 
-		Excel(xlcEcho, XOPER<X>(true));
+		Excel(xlcEcho, OPER(true));
 
 	}
 	catch (const std::exception& ex) {
-		Excel(xlcEcho, XOPER<X>(true));
+		Excel(xlcEcho, OPER(true));
 		XLL_ERROR(ex.what());
 
 		return 0;
@@ -109,8 +109,8 @@ int
 xll_paste_close(void)
 {
 	try {
-		if (Excel(xlfGetBar, XOPER<X>(7), XOPER<X>(4), XOPER<X>("Paste Function")))
-			Excel(xlfDeleteCommand, XOPER<X>(7), XOPER<X>(4), XOPER<X>("Paste Function"));
+		if (Excel(xlfGetBar, OPER(7), OPER(4), OPER("Paste Function")))
+			Excel(xlfDeleteCommand, OPER(7), OPER(4), OPER("Paste Function"));
 	}
 	catch (const std::exception& ex) {
 		XLL_INFO(ex.what());
@@ -127,17 +127,17 @@ xll_paste_open(void)
 {
 	try {
 		// Try to add just above first menu separator.
-		XOPER<X> oPos;
-		oPos = Excel(xlfGetBar, XOPER<X>(7), XOPER<X>(4), XOPER<X>("-"));
+		OPER oPos;
+		oPos = Excel(xlfGetBar, OPER(7), OPER(4), OPER("-"));
 		oPos = 5;
 
-		XOPER<X> oAdj = Excel(xlfGetBar, XOPER<X>(7), XOPER<X>(4), XOPER<X>("Paste Function"));
+		OPER oAdj = Excel(xlfGetBar, OPER(7), OPER(4), OPER("Paste Function"));
 		if (oAdj == Err(xlerrNA)) {
-			XOPER<X> oAdj(1, 5);
+			OPER oAdj(1, 5);
 			oAdj(0, 0) = "Paste Function";
 			oAdj(0, 1) = "XLL.PASTE.FUNCTION";
 			oAdj(0, 3) = "Paste function under cursor into spreadsheet.";
-			Excel(xlfAddCommand, XOPER<X>(7), XOPER<X>(4), oAdj, oPos);
+			Excel(xlfAddCommand, OPER(7), OPER(4), oAdj, oPos);
 		}
 	}
 	catch (const std::exception& ex) {
@@ -154,42 +154,41 @@ static Auto<Open> xao_paste(xll_paste_open);
 #endif // 0
 
 // paste basic function call in active cell and arguments below
-template<class X>
-void xll_paste_regid(const Args& args)
+void xll_paste_regid(const Args* args)
 {
 	// call with defaults arguments to get size of output
-	XOPER<X> xDef0 = args.ArgumentDefault(0);
-	XOPER<X> xVal = XExcel<X>(xlfEvaluate, xDef0);
+	OPER xDef0 = args->ArgumentDefault(0);
+	OPER xVal = Excel(xlfEvaluate, xDef0);
 	if (!xVal) {
-		XOPER<X> xErr = XOPER<X>("Failed to evaluate: ") & xDef0;
+		OPER xErr = OPER("Failed to evaluate: ") & xDef0;
 		XLL_ERROR(xErr.to_string().c_str());
 	}
 	
-	XOPER<X> xAct = XExcel<X>(xlfActiveCell);
-	XOPER<X> xFor = XOPER<X>("=") & args.FunctionText() & XOPER<X>("(");
+	OPER xAct = Excel(xlfActiveCell);
+	OPER xFor = OPER("=") & args->FunctionText() & OPER("(");
 
-	Down<X>(rows(xVal));
-	for (unsigned short i = 1; i <= args.ArgumentCount(); ++i) {
-		XOPER<X> xRel = paste_default(args.ArgumentDefault(i));
+	Down(rows(xVal));
+	for (unsigned short i = 1; i <= args->ArgumentCount(); ++i) {
+		OPER xRel = paste_default(args->ArgumentDefault(i));
 
 		if (i > 1) {
-			xFor.append(XOPER<X>(", "));
+			xFor.append(OPER(", "));
 		}
-		xFor.append(XExcel<X>(xlfReftext, xRel));
-		Down<X>(rows(xRel));
+		xFor.append(Excel(xlfReftext, xRel));
+		Down(rows(xRel));
 	}
 
-	xFor.append(XOPER<X>(")"));
-	XExcel<X>(xlcSelect, xAct);
-	XOPER<X> xRef = XExcel<X>(xlfOffset, xAct,
-		XOPER<X>(0), XOPER<X>(0),
-		XExcel<X>(xlfRows, xVal), XExcel<X>(xlfColumns, xVal)
+	xFor.append(OPER(")"));
+	Excel(xlcSelect, xAct);
+	OPER xRef = Excel(xlfOffset, xAct,
+		OPER(0), OPER(0),
+		Excel(xlfRows, xVal), Excel(xlfColumns, xVal)
 	);
 	if (size(xRef) == 1) {
-		XExcel<X>(xlcFormula, xFor, xRef);
+		Excel(xlcFormula, xFor, xRef);
 	}
 	else {
-		XExcel<X>(xlcFormulaArray, xFor, xRef);
+		Excel(xlcFormulaArray, xFor, xRef);
 	}
 }
 
@@ -197,21 +196,13 @@ void xll_paste_regidx(void)
 {
 	double regid = Excel(xlCoerce, Excel(xlfActiveCell)).val.num;
 
-	const Args4& arg4 = AddIn4::Args(regid);
-	if (arg4.isFunction()) {
-		xll_paste_regid(arg4);
-
-		return;
+	const Args* args = AddIn::Arguments(regid);
+	if (args) {
+		xll_paste_regid(args);
 	}
-
-	const Args12& arg12 = AddIn12::Args(regid);
-	if (arg12.isFunction()) {
-		xll_paste_regid(arg12);
-
-		return;
+	else {
+		throw std::runtime_error("XLL.PASTE.BASIC: register id not found");
 	}
-
-	throw std::runtime_error("XLL.PASTE.BASIC: register id not found");
 }
 static AddIn xai_paste_basic(
 	Macro(XLL_DECORATE("_xll_paste_basic", 0), "XLL.PASTE.BASIC")
@@ -302,7 +293,7 @@ xll_paste_create(void)
 
 		const Args& args = AddIn::Args(regid);
 
-		if (!args.isFunction()) {
+		if (!args->isFunction()) {
 			XLL_WARNING("XLL.PASTE.CREATE: could not find register id of function");
 
 			return 0;
@@ -310,21 +301,21 @@ xll_paste_create(void)
 
 		xFor &= OPER("(");
 
-		for (unsigned i = 1; i <= args.ArgumentCount(); ++i) {
+		for (unsigned i = 1; i <= args->ArgumentCount(); ++i) {
 			Move<XLOPER>(1, 0);
 
-			OPER xNamei = args.ArgumentName(i);
+			OPER xNamei = args->ArgumentName(i);
 			Excel(xlcFormula, xNamei);
 			Excel(xlcAlignment, OPER(4)); // align right
 
 			Move<XLOPER>(0, 1);
 
 			// paste default argument
-			OPER xEval = Excel(xlfEvaluate, args.ArgumentDefault(i));
+			OPER xEval = Excel(xlfEvaluate, args->ArgumentDefault(i));
 			if (xEval.size() > 1) {
 				OPER xFor2 = Excel(xlfConcatenate,
 					OPER("=RANGE.SET("),
-					args.ArgumentDefault(i),
+					args->ArgumentDefault(i),
 					OPER(")"));
 				Excel(xlcFormula, xFor2);
 				xNamei = OPER("RANGE.GET(") & xNamei & OPER(")");
@@ -358,11 +349,11 @@ xll_paste_create(void)
 		// ApplyStyle("Output");
 		Move<XLOPER>(0, -1);
 
-		Excel(xlcFormula, args.FunctionText());
+		Excel(xlcFormula, args->FunctionText());
 		Excel(xlcAlignment, OPER(4)); // align right
 
 		// select range for RDB.DEFINE???
-		// Excel(xlcSelect, Excel(xlfOffset, xAct, OPER(0), OPER(0), OPER(args.ArgumentCount() + 1), OPER(2)));
+		// Excel(xlcSelect, Excel(xlfOffset, xAct, OPER(0), OPER(0), OPER(args->ArgumentCount() + 1), OPER(2)));
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

@@ -1,11 +1,7 @@
 // document.cpp - generate add-in documentaton
 #include <fstream>
-#include "splitpath.h"
-#include "error.h"
-#include "addin.h"
-#include "auto.h"
-#include "excel.h"
-#include "document.h"
+#include "xll/xll/splitpath.h"
+#include "xll_macrofun.h"
 
 namespace xll {
 

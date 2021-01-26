@@ -37,10 +37,10 @@ LPOPER WINAPI xll_args(LPOPER pname, LPOPER pkeys)
 	try {
 		Args* pargs = nullptr;
 		if (pname->is_str()) {
-			pargs = &AddIn::Args(*pname);
+			pargs = AddIn::Arguments(*pname);
 		}
 		else if (pname->is_num()) {
-			pargs = &AddIn::Args(pname->as_num());
+			pargs = AddIn::Arguments(pname->as_num());
 		}
 		else {
 			XLL_ERROR("XLL.ARGS: name must be a string or number");
