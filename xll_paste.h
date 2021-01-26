@@ -1,6 +1,6 @@
 // xll_paste.h - paste functions into spreadsheet
 #pragma once
-#include "xll/xll/xll.h"
+#include "xll_macrofun.h"
 
 namespace xll {
 

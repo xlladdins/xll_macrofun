@@ -2,8 +2,6 @@
 // If it is a number, just paste the default arguments and do not define names.
 // If it is a string, use that as a rdb prefix for defined names.
 #include "xll/xll/splitpath.h"
-#include "xll/xll/xll.h"
-#include "xll_macrofun.h"
 #include "xll_paste.h"
 
 using namespace xll;
