@@ -1,12 +1,17 @@
 // spreadsheet.h - tools for automating spreadsheet creation
-// https://xlladdins.github.io/Excel4Macros/
 // 
-// For xlcMacroFun having many arguments we define struct MacroFun.
-// It has OPER members with exactly the same name as the documentation
-// and a member OPER Fun() that calls Excel(xlcMacroFun, args...),
+// This header makes it convenient to call macro functions 
+// documented in https://xlladdins.github.io/Excel4Macros/
+// 
+// For `xlcMacroFun` having many arguments we define `struct MacroFun`.
+// It has members with exactly the same name as in the documentation
+// and a member function `Fun()` that calls `Excel(xlcMacroFun, args...)`,
 // and possibly come convenience functions making it easier to use.
 // We throw in some enums from the documentation for the macro function
 // and provide static members for common operations.
+//
+// Create a `MacroFun` object, set members as desired, then call `Fun()`.
+
 #pragma once
 //#define XLL_VERSION 4
 #include "xll/xll/xll.h"
@@ -24,29 +29,39 @@ namespace xll {
 	inline XOPER<X> Move(int r, int c)
 	{
 		return XExcel<X>(xlcSelect,
-			XExcel<X>(xlfOffset, XExcel<X>(xlfActiveCell), XOPER<X>(r), XOPER<X>(c))
+			XExcel<X>(xlfOffset, 
+				XExcel<X>(xlfActiveCell), XOPER<X>(r), XOPER<X>(c)
+			)
 		);
 	}
-	template<class X = XLOPERX>
-	inline XOPER<X> Up(int r = 1)
-	{
-		return Move<X>(-r, 0);
-	}
+	// move down r rows
 	template<class X = XLOPERX>
 	inline XOPER<X> Down(int r = 1)
 	{
 		return Move<X>(r, 0);
 	}
+	// move up r rows
+	template<class X = XLOPERX>
+	inline XOPER<X> Up(int r = 1)
+	{
+		return Move<X>(-r, 0);
+	}
+	// move right c columns
 	template<class X = XLOPERX>
 	inline XOPER<X> Right(int c = 1)
 	{
 		return Move<X>(0, c);
 	}
+	// move left c columns
 	template<class X = XLOPERX>
 	inline XOPER<X> Left(int c = 1)
 	{
 		return Move<X>(0, -c);
 	}
+
+	//
+	// MacroFun objects
+	//
 
 	// RGB colors in the palette
 	// https://xlladdins.github.io/Excel4Macros/edit.color.html
@@ -61,11 +76,15 @@ namespace xll {
 			ensure(0 <= _g and _g <= 255);
 			ensure(0 <= _b and _b <= 255);
 		}
-		// Add to color palette
-		OPER Color() const
+		// Add from end of color palette
+		OPER Color(int index = 0) const
 		{
-			ensure(--count > 10);
-			ensure(xll::Excel(xlcEditColor, OPER(count), OPER(r), OPER(g), OPER(b)));
+			if (index == 0) {
+				ensure(--count > 1);
+				index = count;
+			}
+			ensure(0 <= index and index <= 56);
+			ensure(xll::Excel(xlcEditColor, OPER(index), OPER(r), OPER(g), OPER(b)));
 
 			return OPER(count);
 		}
@@ -144,13 +163,13 @@ namespace xll {
 	struct FormatFont {
 		OPER name_text = Missing; // font name, e.g., "Calibri"
 		OPER size_num = Missing;  // font size in points
-		OPER bold = Missing;
-		OPER italic = Missing;
-		OPER underline = Missing;
-		OPER strike = Missing;
-		OPER color = Missing;
-		OPER outline = Missing;
-		OPER shadow = Missing;
+		OPER bold = Missing;      // boolean
+		OPER italic = Missing;    // boolean
+		OPER underline = Missing; // boolean
+		OPER strike = Missing;    // boolean
+		OPER color = Missing;     // color palette index
+		OPER outline = Missing;   // boolean
+		OPER shadow = Missing;    // boolean
 
 		OPER Font()
 		{

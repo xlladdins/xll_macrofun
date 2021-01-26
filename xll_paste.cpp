@@ -155,12 +155,20 @@ static Auto<Open> xao_paste(xll_paste_open);
 
 // paste basic function call in active cell and arguments below
 template<class X>
-void xll_paste_regid(const XArgs<X>& args)
+void xll_paste_regid(const Args& args)
 {
+	// call with defaults arguments to get size of output
+	XOPER<X> xDef0 = args.ArgumentDefault(0);
+	XOPER<X> xVal = XExcel<X>(xlfEvaluate, xDef0);
+	if (!xVal) {
+		XOPER<X> xErr = XOPER<X>("Failed to evaluate: ") & xDef0;
+		XLL_ERROR(xErr.to_string().c_str());
+	}
+	
 	XOPER<X> xAct = XExcel<X>(xlfActiveCell);
 	XOPER<X> xFor = XOPER<X>("=") & args.FunctionText() & XOPER<X>("(");
 
-	Down<X>(1);
+	Down<X>(rows(xVal));
 	for (unsigned short i = 1; i <= args.ArgumentCount(); ++i) {
 		XOPER<X> xRel = paste_default(args.ArgumentDefault(i));
 
@@ -172,9 +180,17 @@ void xll_paste_regid(const XArgs<X>& args)
 	}
 
 	xFor.append(XOPER<X>(")"));
-	//!!! if range is returned move args down.
-	XExcel<X>(xlcFormula, xFor, xAct);
 	XExcel<X>(xlcSelect, xAct);
+	XOPER<X> xRef = XExcel<X>(xlfOffset, xAct,
+		XOPER<X>(0), XOPER<X>(0),
+		XExcel<X>(xlfRows, xVal), XExcel<X>(xlfColumns, xVal)
+	);
+	if (size(xRef) == 1) {
+		XExcel<X>(xlcFormula, xFor, xRef);
+	}
+	else {
+		XExcel<X>(xlcFormulaArray, xFor, xRef);
+	}
 }
 
 void xll_paste_regidx(void)
