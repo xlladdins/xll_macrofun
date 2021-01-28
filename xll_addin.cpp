@@ -6,18 +6,30 @@ using namespace xll;
 
 #define ARGS_HELP_URL "XLL.ARGS.html"
 
-XLL_CONST(CSTRING, XLL_ARGS_PROCEDURE, _T("Procedure"),"Return \"Procedure\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_TYPE_TEXT, _T("TypeText"), "Return \"TypeText\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_FUNCTION_TEXT, _T("FunctionText"), "Return \"FunctionText\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_TEXT, _T("ArgumentText"), "Return \"ArgumentText\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_MACRO_TYPE, _T("MacroType"), "Return \"MacroType\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_CATEGORY, _T("Category"), "Return \"Category\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_SHORTCUT_TEXT, _T("ShortcutText"), "Return \"ShortcutText\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_HELP_TOPIC, _T("HelpTopic"), "Return \"HelpTopic\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_FUNCTION_HELP, _T("FunctionHelp"), "Return \"FunctionHelp\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_NAME, _T("ArgumentName"), "Return \"ArgumentName\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_HELP, _T("ArgumentHelp"), "Return \"ArgumentHelp\"", "XLL", ARGS_HELP_URL);
-XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_DEFAULT, _T("ArgumentDefault"), "Return \"ArgumentDefault\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_PROCEDURE, 
+	_T("Procedure"),"Return \"Procedure\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_TYPE_TEXT, 
+	_T("TypeText"), "Return \"TypeText\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_FUNCTION_TEXT, 
+	_T("FunctionText"), "Return \"FunctionText\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_TEXT, 
+	_T("ArgumentText"), "Return \"ArgumentText\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_MACRO_TYPE, 
+	_T("MacroType"), "Return \"MacroType\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_CATEGORY, 
+	_T("Category"), "Return \"Category\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_SHORTCUT_TEXT, 
+	_T("ShortcutText"), "Return \"ShortcutText\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_HELP_TOPIC, 
+	_T("HelpTopic"), "Return \"HelpTopic\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_FUNCTION_HELP, 
+	_T("FunctionHelp"), "Return \"FunctionHelp\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_NAME, 
+	_T("ArgumentName"), "Return \"ArgumentName\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_HELP, 
+	_T("ArgumentHelp"), "Return \"ArgumentHelp\"", "XLL", ARGS_HELP_URL);
+XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_DEFAULT, 
+	_T("ArgumentDefault"), "Return \"ArgumentDefault\"", "XLL", ARGS_HELP_URL);
 
 AddIn xai_args(
 	Function(XLL_LPOPER, "xll_args", "XLL.ARGS")

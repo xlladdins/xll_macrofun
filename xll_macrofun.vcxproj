@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="xll_addin.cpp" />
     <ClCompile Include="xll_document.cpp" />
+    <ClCompile Include="xll_function.cpp" />
     <ClCompile Include="xll_macrofun.cpp" />
     <ClCompile Include="xll_paste.cpp" />
     <ClCompile Include="xll_test.cpp" />
