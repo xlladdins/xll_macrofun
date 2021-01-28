@@ -107,7 +107,7 @@ LPOPER WINAPI xll_addins(void)
 		result = Nil;
 		for (const auto& [key, args] : AddIn::Map) {
 			OPER row = OPER({ key, args.RegisterId() });
-			result.push_bottom(row);
+			result.push_back(row);
 		}
 	}
 	catch (const std::exception& ex) {

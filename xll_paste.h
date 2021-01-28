@@ -13,24 +13,25 @@ namespace xll {
 	// Arguments that are function calls are pasted as array formulas if necessary.
 	inline OPER paste_default(const OPER& x)
 	{
+		ensure(x.is_str());
 		OPER ref = Excel(xlfActiveCell);
 
-		if (x.is_str() and x.val.str[1] == '=') {
+		if (x.val.str[0] > 0 and x.val.str[1] == '{') {
 			// formula
 			OPER xi = Excel(xlfEvaluate, x);
 			ensure(xi);
 			if (size(xi) == 1) {
-				ensure(Excel(xlcFormula, x, ref));
+				ensure(Excel(xlcFormula, xi, ref));
 			}
 			else {
 				auto rw = rows(xi);
 				auto col = columns(xi);
 				ref = Excel(xlfOffset, ref, OPER(0), OPER(0), OPER(rw), OPER(col));
-				ensure(Excel(xlcFormulaArray, x, ref));
+				ensure(Excel(xlcFormulaArray, xi, ref));
 			}
 		}
 		else {
-			// paste as formula to evaluate the string
+			// paste as formula
 			ensure(Excel(xlcFormula, x, ref));
 		}
 

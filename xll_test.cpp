@@ -15,8 +15,18 @@ inline bool test_map()
 
 		om[OPER("Foo")] = "baz";
 		ensure(om[OPER("fOo")] == "baz");
-		int i;
-		i = 1;
+
+		om[OPER("bam")] = OPER(2, 3);
+		
+		OPER& bam = om[OPER("bam")];
+		ensure(rows(bam) == 2 and columns(bam) == 3);
+		bam[3] = OPER(3, 2);
+		bam[3][3] = "fiz";
+
+		const OPER& bam2 = om[OPER("bam")];
+		ensure(bam2[3] == bam2(1, 0));
+		ensure(bam2[3][3] == bam2[3](1,1))
+		ensure(bam2(1, 0)(1, 1) == "fiz");
 	}
 
 	return true;
@@ -38,7 +48,7 @@ double WINAPI xll_test1(double x)
 AddIn xai_test2(
 	Function(XLL_DOUBLE, "xll_test2", "TEST2")
 	.Arguments({
-		{XLL_LPOPER, "r", "is a range", "={1.23, 4.56}"} // 1x2
+		{XLL_LPOPER, "r", "is a range", "{1.23, 4.56}"} // 1x2
 		})
 );
 double WINAPI xll_test2(LPOPER pr)
@@ -51,7 +61,7 @@ double WINAPI xll_test2(LPOPER pr)
 AddIn xai_test3(
 	Function(XLL_DOUBLE, "xll_test3", "TEST3")
 	.Arguments({
-		{XLL_LPOPER, "r", "is a range", "={1.23; 4.56}"} // 2x1
+		{XLL_LPOPER, "r", "is a range", "{1.23; 4.56}"} // 2x1
 	})
 );
 double WINAPI xll_test3(LPOPER pr)
@@ -64,9 +74,9 @@ double WINAPI xll_test3(LPOPER pr)
 AddIn xai_test4(
 	Function(XLL_DOUBLE, "xll_test4", "TEST4")
 	.Arguments({
-		{XLL_LPOPER, "r", "is a range", "={1.23; 4.56}"}, // 2x1
-		{XLL_LPOPER, "r2", "is another range", "={1,2;3,4}"}, // 2x2
-		{XLL_CSTRING, "s", "is a string", "abc"}
+		{XLL_LPOPER, "r", "is a range", "{1.23; 4.56}"}, // 2x1
+		{XLL_LPOPER, "r2", "is another range", "{1,2;3,4}"}, // 2x2
+		{XLL_CSTRING, "s", "is a string", "\"abc\""}
 	})
 );
 double WINAPI xll_test4(LPOPER pr, LPOPER pr2, traits<XLOPERX>::xcstr s)

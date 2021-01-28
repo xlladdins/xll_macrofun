@@ -6,9 +6,80 @@
 
 using namespace xll;
 
+using xchar = traits<XLOPERX>::xchar;
+
+AddIn xai_eval(
+	Function(XLL_LPOPER, "xll_eval", "XLL.EVALUATE")
+	.Arguments({
+		{XLL_PSTRING, "str", "is a string to be evaluated.", "\"abc\""}
+	})
+	.FunctionHelp("Call xlfEvaluate on string.")
+	.Category("XLL")
+	.Documentation(R"(
+The Excel function <c>xlfEvaluate</c> uses the Excel engine to evaluate
+its argument, just like pressing <c>F9</c> evaluates selected text
+in the formula bar. A naked string like <c>"abc"</c> is interpreted as
+the named range <c>abc</c>. To get <code>EVAL</code> to treat it like
+a string it must be enclosed in quotes, <c>"\"abc\""</c>.
+<p>
+Two dimensional ranges are enclosed in curly braces using commas for
+field seperators and semi-colons for record seperators, <c>"{1,\"a\";FALSE,2.34}"</c>.
+)")
+);
+LPOPER WINAPI xll_eval(xchar* str)
+{
+#pragma XLLEXPORT
+	static OPER result;
+
+	try {
+		XLOPERX Str;
+		Str.val.str = str;
+		Str.xltype = xltypeStr;
+
+		result = Excel(xlfEvaluate, Str);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		result = ErrNA;
+	}
+	catch (...) {
+		XLL_ERROR("unknown error");
+		result = ErrNA;
+	}
+
+	return &result;
+}
+
+AddIn xai_reftext(
+	Function(XLL_LPOPER, "xll_reftext", "XLL.REFTEXT")
+	.Arguments({
+		{XLL_LPXLOPER, "ref", "is a cell reference.", "A1"},
+		{XLL_BOOL, "a1", "is a boolean specifying A1 or R1C1-style references.", "FALSE"}
+		})
+	.Uncalced()
+	.FunctionHelp("Converts a reference to an absolute reference in the form of text.")
+	.Category("XLL")
+);
+LPOPER WINAPI xll_reftext(LPOPER pref, BOOL a1)
+{
+#pragma XLLEXPORT
+	static OPER result;
+
+	try {
+		result = Excel(xlfReftext, *pref, OPER(a1));
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		result = ErrNA;
+	}
+	catch (...) {
+		XLL_ERROR("unknown exception");
+		result = ErrNA;
+	}
+
+	return &result;
+}
 #if 0
-
-
 
 template<class X>
 void xll_paste_name(const XArgs& args)
@@ -168,7 +239,18 @@ void xll_paste_regid(const Args* args)
 	Down(rows(xVal));
 	for (unsigned short i = 1; i <= args->ArgumentCount(); ++i) {
 		OPER xRel = paste_default(args->ArgumentDefault(i));
-
+		/*
+		OPER xDefi = args->ArgumentDefault(i);
+		ensure(xDefi.is_str());
+		if (xDefi.val.str[0] != 0 and xDefi.val.str[1] == '{') {
+			xDefi = Excel(xlfEvaluate, xDefi);
+		}
+		OPER xRel = Excel(xlcFormula, xDefi, Excel(xlfActiveCell));
+		ensure(xRel);
+		xRel = Select::Special(Select::Type::Current);
+		ensure(xRel);
+		xRel = Excel(xlfActiveCell);
+		*/
 		if (i > 1) {
 			xFor.append(OPER(", "));
 		}

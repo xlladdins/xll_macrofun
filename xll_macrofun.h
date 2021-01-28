@@ -529,8 +529,8 @@ namespace xll {
 			Constants = 2,
 			Formulas = 3,
 			Blanks = 4,
-			CurrentRegion = 5,
-			Current = 6, // current array
+			Current = 5, // region
+			CurrentArray = 6,
 			RowDifferences = 7,
 			ColumnDifferences = 8,
 			Precedents = 9,
