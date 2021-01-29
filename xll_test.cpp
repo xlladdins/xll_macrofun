@@ -90,9 +90,9 @@ double WINAPI xll_test4(LPOPER pr, LPOPER pr2, traits<XLOPERX>::xcstr s)
 AddIn xai_test5(
 	Function(XLL_LPOPER, "xll_test5", "TEST5")
 	.Arguments({
-		{XLL_LPOPER, "r", "is a range", "={1.23; 4.56}"}, // 2x1
-		{XLL_LPOPER, "r2", "is another range", "={1,2;3,4}"}, // 2x2
-		{XLL_CSTRING, "s", "is a string", "\'abc"}
+		{XLL_LPOPER, "r", "is a range", "{1.23; 4.56}"}, // 2x1
+		{XLL_LPOPER, "r2", "is another range", "{1,2;3,4}"}, // 2x2
+		{XLL_CSTRING, "s", "is a string", "\"abc\""}
 		})
 );
 LPOPER WINAPI xll_test5(LPOPER, LPOPER, traits<XLOPERX>::xcstr s)
@@ -106,4 +106,21 @@ LPOPER WINAPI xll_test5(LPOPER, LPOPER, traits<XLOPERX>::xcstr s)
 	return &result;
 }
 
+// TEST5 - return an array
+AddIn xai_test6(
+	Function(XLL_LPOPER, "xll_test6", "TEST6")
+	.Arguments({
+		{XLL_DOUBLE, "d1", "is a double", "1.23"},
+		{XLL_DOUBLE, "d2", "is a double", "RAND()"}, // 2x2
+		})
+);
+LPOPER WINAPI xll_test6(double d1, double d2)
+{
+#pragma XLLEXPORT
+	static OPER result;
+
+	result = d1 + d2;
+
+	return &result;
+}
 #endif // _DEBUG
