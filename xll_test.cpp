@@ -1,9 +1,43 @@
-// xll_test.cpp - test add-ins for paste function
+﻿// xll_test.cpp - test add-ins for paste function
 #include "xll/xll/xll.h"
+#include "xll_macrofun.h"
 
 using namespace xll;
 
 #ifdef _DEBUG
+
+AddIn xai_alert(Macro("xll_alert", "XLL.ALERT"));
+int WINAPI xll_alert()
+{
+#pragma XLLEXPORT
+	OPER o = Excel(xlcAlert, OPER("Alert text"), OPER(1));
+
+	return TRUE;
+}
+
+AddIn xai_object(Macro("xll_macro", "XLL.MACRO"));
+int WINAPI xll_macro()
+{
+#pragma XLLEXPORT
+	OPER A1(REF(0, 0));
+	OPER B2(REF(1, 1));
+	/*
+	OPER z(0);
+	OPER o = Excel(xlfCreateObject, OPER(7), A1, z, z, B2, z, z, OPER("*"));
+	o = Excel(xlcAssignToObject, OPER("XLL.ALERT"));
+	*/
+	CreateObject button(CreateObject::Type::Button, A1, B2);
+	button.text = "@";
+	button.Object();
+	button.Assign(OPER("XLL.ALERT"));
+
+	//CreateObject dialog(CreateObject::Type::DialogFrame, OPER(REF(2, 2)), OPER(REF(6, 6)));
+	//dialog.text = "Dialog Text";
+	//dialog.Object();
+
+	return TRUE;
+}
+
 
 inline bool test_map()
 {
