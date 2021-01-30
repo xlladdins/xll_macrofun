@@ -5,6 +5,73 @@
 #include "xll_paste.h"
 
 using namespace xll;
+using xll::Excel;
+
+// Lookup Args using name or register id.
+inline Args* xll_arguments(const OPER& xRef = Excel(xlfActiveCell))
+{
+	Args* pargs = nullptr;
+
+	OPER xCaller = Excel(xlCoerce, xRef);
+	if (xCaller.is_str()) {
+		pargs = AddIn::Arguments(xCaller);
+	}
+	else if (xCaller.is_num()) {
+		pargs = AddIn::Arguments(xCaller.as_num());
+	}
+	else {
+		XLL_ERROR("xll_arguments: cell must contain string or number");
+	}
+
+	return pargs;
+}
+
+AddIn xai_paste_args(
+	Macro("xll_paste_args", "XLL.PASTE.ARGS")
+	.FunctionHelp("Paste function using default arguments.")
+	.Category("XLL")
+	.ShortcutText(ON_CTRL ON_SHIFT "2")
+	.Documentation(R"(
+This macro works like <c>Ctrl-Shift-A</c> except it pastes argument defaults
+instead of argument names.
+)")
+);
+int WINAPI xll_paste_args()
+{
+#pragma XLLEXPORT
+	int result = FALSE;
+
+	try {
+		const OPER& xRef = Excel(xlfActiveCell);
+		Args* pargs = xll_arguments(xRef);
+		ensure(pargs || !"XLL.PASTE.ARGS: name or register id not found");
+		const OPER& xDef0 = pargs->ArgumentDefault(0);
+		ensure(Excel(xlcFormula, xDef0, xRef)); // FormulaArray???
+		result = TRUE;
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+	catch (...) {
+		XLL_ERROR("XLL.PASTE.ARGS: unknown exception");
+	}
+
+	return result;
+}
+
+// Ctrl-Alt-@ is like Ctrl-Shift-A but paste default values.
+Auto<Open> xaoa_paste_args([]() {
+	try {
+		On<Key> xok_paste_args(ON_CTRL ON_SHIFT "2", "XLL.PASTE.ARGS");
+	}
+	catch (...) {
+		XLL_ERROR("On<Key> failed to assign Ctrl-Shift-2 to XLL.PASTE.ARGS");
+
+		return FALSE;
+	}
+
+	return TRUE;
+});
 
 
 #if 0

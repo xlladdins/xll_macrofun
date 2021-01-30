@@ -34,8 +34,8 @@ XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_HELP,
 XLL_CONST(CSTRING, XLL_ARGS_ARGUMENT_DEFAULT, 
 	_T("ArgumentDefault"), "Return \"ArgumentDefault\"", "XLL", ARGS_HELP_URL);
 
-AddIn xai_addins(
-	Function(XLL_LPOPER, "xll_addins", "XLL.ADDINS")
+AddIn xai_addin(
+	Function(XLL_LPOPER, "xll_addin", "XLL.ADDIN")
 	.FunctionHelp("Return array of all add-ins.")
 	.Category("XLL")
 	.Documentation(R"(
@@ -43,7 +43,7 @@ Return a one column array of all registered add-ins. These can
 be used as the first argument to <c>XLL.ARGS</c> or <c>XLL.ARGS.ARGUMENTS</c>.
 )")
 );
-LPOPER WINAPI xll_addins(void)
+LPOPER WINAPI xll_addin(void)
 {
 #pragma XLLEXPORT
 	static OPER result;

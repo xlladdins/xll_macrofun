@@ -203,6 +203,8 @@ namespace xll {
 		}
 	};
 
+	// Factor out Object class with Polygon and Chart sublasses. 
+	// Factor out Input class.
 	// https://xlladdins.github.io/Excel4Macros/create.object.html
 	struct CreateObject {
 		OPER obj_type;
