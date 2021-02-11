@@ -684,7 +684,7 @@ namespace xll {
 	// https://xlladdins.github.io/Excel4Macros/selection.html
 	// https://xlladdins.github.io/Excel4Macros/select.html
 	struct Select {
-		OPER selection; // ??? must be an sref
+		OPER selection; // ??? must be an sref 
 		Select(const OPER& _selection = Excel(xlfActiveCell))
 			: selection(_selection)
 		{
